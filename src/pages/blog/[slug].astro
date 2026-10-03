@@ -17,7 +17,8 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
 ---
 
 <BaseLayout title={`${title} | My Blog`} description={description}>
-  <article>
+  <!-- data-pagefind-body: 全站只索引文章页正文，搜索不混入标签/列表页 -->
+  <article data-pagefind-body>
     <header class="mb-14">
       <div class="flex items-baseline gap-4 text-sm text-ink/45">
         <time datetime={pubDate.toISOString()} class="tabular-nums tracking-wide">
@@ -42,7 +43,10 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
           )
         }
       </div>
-      <h1 class="mt-5 text-3xl md:text-4xl font-semibold leading-snug tracking-wide">
+      <h1
+        data-pagefind-meta="title"
+        class="mt-5 text-3xl md:text-4xl font-semibold leading-snug tracking-wide"
+      >
         {title}
       </h1>
       {

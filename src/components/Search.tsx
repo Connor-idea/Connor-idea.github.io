@@ -1,36 +1,37 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Fuse from 'fuse.js';
 
-interface SearchItem {
+interface SearchResult {
   id: string;
-  title: string;
-  description: string;
-  tags: string[];
-  pubDate: string;
   url: string;
-  content: string;
+  excerpt: string;
+  meta: { title?: string };
 }
 
+/** Pagefind 懒加载搜索：中文按 Unicode 分词，构建期建索引，无外部服务 */
 export default function Search() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [items, setItems] = useState<SearchItem[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // @ts-expect-error pagefind 是构建产物里的动态模块，无类型
+  const pagefindRef = useRef<any>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 懒加载搜索索引
-  useEffect(() => {
-    if (!open || loaded) return;
-    fetch('/search-index.json')
-      .then((res) => res.json())
-      .then((data: SearchItem[]) => {
-        setItems(data);
-        setLoaded(true);
-      })
-      .catch(console.error);
-  }, [open, loaded]);
+  async function ensurePagefind() {
+    if (pagefindRef.current) return pagefindRef.current;
+    // Pagefind 在 astro build 后由 CLI 生成到 /pagefind/
+    // 用变量绕开 Vite 静态分析，保持运行时解析
+    const pfUrl = '/pagefind/pagefind.js';
+    const pf = await import(/* @vite-ignore */ pfUrl);
+    await pf.options({ excerptLength: 30 });
+    pagefindRef.current = pf;
+    setReady(true);
+    return pf;
+  }
 
-  // 快捷键：Ctrl/Cmd + K 打开，Esc 关闭
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -43,35 +44,62 @@ export default function Search() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // 打开后聚焦输入框
   useEffect(() => {
     if (open) {
       requestAnimationFrame(() => inputRef.current?.focus());
+      ensurePagefind().catch(() => setError('搜索索引未加载，请先执行 npm run build'));
     } else {
       setQuery('');
+      setResults([]);
+      setError(null);
     }
   }, [open]);
 
-  const fuse = useMemo(
-    () =>
-      new Fuse(items, {
-        keys: [
-          { name: 'title', weight: 0.4 },
-          { name: 'description', weight: 0.25 },
-          { name: 'tags', weight: 0.15 },
-          { name: 'content', weight: 0.2 },
-        ],
-        threshold: 0.35,
-        ignoreLocation: true,
-        includeScore: true,
-      }),
-    [items]
-  );
+  // 防抖查询
+  useEffect(() => {
+    if (!open) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
 
-  const results = useMemo(() => {
-    if (!query.trim()) return [];
-    return fuse.search(query.trim(), { limit: 10 }).map((r) => r.item);
-  }, [fuse, query]);
+    const q = query.trim();
+    if (!q) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+
+    // 换查询词时立刻清空旧结果，避免残留
+    setResults([]);
+    setLoading(true);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const pf = await ensurePagefind();
+        const search = await pf.search(q);
+        const top = await Promise.all(
+          search.results.slice(0, 8).map(async (r: { data: () => Promise<SearchResult> }) => {
+            const data = await r.data();
+            return {
+              id: data.url,
+              url: data.url,
+              excerpt: data.excerpt,
+              meta: { title: (data.meta?.title ?? data.url).trim() },
+            };
+          })
+        );
+        setResults(top);
+        setError(null);
+      } catch {
+        setError('搜索失败，请稍后重试');
+      } finally {
+        setLoading(false);
+      }
+    }, 180);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query, open, ready]);
+
+  const hasQuery = useMemo(() => query.trim().length > 0, [query]);
 
   return (
     <>
@@ -88,7 +116,7 @@ export default function Search() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -109,12 +137,12 @@ export default function Search() {
           aria-label="搜索"
         >
           <div
-            className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-ink/35 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
 
           <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-paper shadow-2xl">
-            <div className="flex items-center gap-2 border-b border-ink/10 px-4">
+            <div className="flex items-center gap-2 px-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -122,7 +150,7 @@ export default function Search() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="shrink-0 text-ink/40"
@@ -147,20 +175,24 @@ export default function Search() {
               </button>
             </div>
 
-            <div className="max-h-[50vh] overflow-y-auto p-2">
-              {!loaded && query.trim() && (
-                <p className="px-3 py-6 text-center text-sm text-ink/50">加载中…</p>
+            <div className="max-h-[50vh] overflow-y-auto px-2 pb-2">
+              {error && (
+                <p className="px-3 py-6 text-center text-sm text-ink/50">{error}</p>
               )}
 
-              {loaded && query.trim() && results.length === 0 && (
+              {!error && !hasQuery && (
                 <p className="px-3 py-6 text-center text-sm text-ink/50">
-                  没有找到「{query}」相关文章
+                  输入关键词开始搜索
                 </p>
               )}
 
-              {!query.trim() && (
+              {!error && hasQuery && loading && (
+                <p className="px-3 py-6 text-center text-sm text-ink/50">搜索中…</p>
+              )}
+
+              {!error && hasQuery && !loading && results.length === 0 && (
                 <p className="px-3 py-6 text-center text-sm text-ink/50">
-                  输入关键词开始搜索
+                  没有找到「{query.trim()}」相关文章
                 </p>
               )}
 
@@ -172,20 +204,11 @@ export default function Search() {
                       onClick={() => setOpen(false)}
                       className="block rounded-xl px-3 py-3 hover:bg-accent/[0.07] transition-colors"
                     >
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-ink">{item.title}</h3>
-                        {item.tags.slice(0, 2).map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-xs text-accent/75"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="mt-1 line-clamp-2 text-sm text-ink/60">
-                        {item.description}
-                      </p>
+                      <h3 className="font-medium text-ink">{item.meta.title}</h3>
+                      <p
+                        className="mt-1 text-sm text-ink/55 leading-relaxed [&_mark]:bg-accent/20 [&_mark]:text-inherit"
+                        dangerouslySetInnerHTML={{ __html: item.excerpt }}
+                      />
                     </a>
                   </li>
                 ))}

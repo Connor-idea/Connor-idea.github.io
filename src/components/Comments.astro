@@ -4,16 +4,16 @@ import { GISCUS } from '../consts';
 const isPlaceholder = GISCUS.repo.includes('your-username');
 ---
 
-<section class="mt-12 pt-6 border-t border-ink/10" aria-label="评论">
-  <h2 class="text-lg font-semibold tracking-tight mb-4">评论</h2>
+<section class="mt-24" aria-label="评论">
+  <h2 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">评论</h2>
 
   {
     isPlaceholder ? (
-      <div class="rounded-xl border border-ink/10 bg-ink/5 p-6 text-sm text-ink/60">
-        <p class="font-medium text-ink/80">评论功能尚未配置</p>
+      <div class="mt-6 rounded-2xl bg-ink/[0.04] px-7 py-8 text-sm text-ink/55">
+        <p class="font-medium text-ink/75 tracking-wide">评论功能尚未配置</p>
         <p class="mt-2 leading-relaxed">
           请在{' '}
-          <code class="rounded bg-ink/10 px-1.5 py-0.5 font-mono text-xs">src/consts.ts</code>{' '}
+          <code class="font-mono text-xs text-accent/80">src/consts.ts</code>{' '}
           中填入你的 giscus 仓库信息（
           <a
             href="https://giscus.app/zh-CN"

@@ -20,20 +20,20 @@ const { currentPage, total } = page;
   title={currentPage === 1 ? '博客 | My Blog' : `博客 · 第 ${currentPage} 页 | My Blog`}
   description="全部文章列表"
 >
-  <header class="mb-10">
-    <h1 class="text-3xl font-bold tracking-tight">博客</h1>
-    <p class="mt-2 text-ink/60">共 {total} 篇文章</p>
+  <header class="mb-4">
+    <h1 class="text-3xl font-semibold tracking-wide">博客</h1>
+    <p class="mt-3 text-ink/45 tracking-wide">共 {total} 篇文章</p>
   </header>
 
   {
     page.data.length > 0 ? (
-      <ul class="space-y-4">
+      <ul class="mt-4">
         {page.data.map((post) => (
           <PostCard post={post} />
         ))}
       </ul>
     ) : (
-      <p class="text-ink/60">还没有文章，敬请期待。</p>
+      <p class="mt-12 text-ink/45">还没有文章，敬请期待。</p>
     )
   }
 

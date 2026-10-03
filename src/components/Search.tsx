@@ -78,7 +78,7 @@ export default function Search() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex h-9 items-center gap-2 rounded-lg border border-ink/10 px-3 text-sm text-ink/60 hover:text-ink hover:border-ink/20 transition-colors"
+        className="inline-flex h-9 items-center gap-2 px-1 text-sm text-ink/50 hover:text-accent transition-colors"
         aria-label="搜索文章"
       >
         <svg
@@ -96,7 +96,7 @@ export default function Search() {
           <path d="m21 21-4.3-4.3" />
         </svg>
         <span className="hidden sm:inline">搜索</span>
-        <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-ink/10 bg-ink/5 px-1.5 text-[10px] text-ink/50">
+        <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[10px] text-ink/35 tracking-wide">
           ⌘K
         </kbd>
       </button>
@@ -113,7 +113,7 @@ export default function Search() {
             onClick={() => setOpen(false)}
           />
 
-          <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-ink/10 bg-paper shadow-xl">
+          <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-paper shadow-2xl">
             <div className="flex items-center gap-2 border-b border-ink/10 px-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +141,7 @@ export default function Search() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="shrink-0 rounded border border-ink/10 px-1.5 text-xs text-ink/50 hover:text-ink"
+                className="shrink-0 px-1.5 text-xs text-ink/35 hover:text-ink transition-colors"
               >
                 ESC
               </button>
@@ -170,14 +170,14 @@ export default function Search() {
                     <a
                       href={item.url}
                       onClick={() => setOpen(false)}
-                      className="block rounded-xl px-3 py-3 hover:bg-accent/10 transition-colors"
+                      className="block rounded-xl px-3 py-3 hover:bg-accent/[0.07] transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <h3 className="font-medium text-ink">{item.title}</h3>
                         {item.tags.slice(0, 2).map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full bg-accent/10 text-accent px-2 py-0.5 text-xs"
+                            className="text-xs text-accent/75"
                           >
                             {tag}
                           </span>

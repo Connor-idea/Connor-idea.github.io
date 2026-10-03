@@ -4,18 +4,19 @@ import { SITE } from '../consts';
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-ink/10">
-  <div class="max-w-4xl mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-sm text-ink/60">
+<!-- 页脚：无分割线，大留白自然收束 -->
+<footer class="mt-auto">
+  <div class="max-w-3xl mx-auto px-6 sm:px-8 py-16 flex flex-wrap items-center justify-between gap-6 text-sm text-ink/45">
     <p>© {year} {SITE.author}</p>
-    <div class="flex items-center gap-4">
-      <a href="/rss.xml" class="hover:text-accent transition-colors">RSS</a>
+    <div class="flex items-center gap-8">
+      <a href="/rss.xml" class="hover:text-accent transition-colors tracking-wide">RSS</a>
       <a
         href="https://astro.build"
-        class="hover:text-accent transition-colors"
+        class="hover:text-accent transition-colors tracking-wide"
         target="_blank"
         rel="noopener noreferrer"
       >
-        Built with Astro
+        Astro
       </a>
     </div>
   </div>

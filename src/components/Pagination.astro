@@ -17,7 +17,6 @@ const base = normalize(basePath);
 // Astro [...page] 约定：第 1 页在 /blog/，后续页在 /blog/2/ 等
 const pageHref = (n: number) => (n === 1 ? `${base}/` : `${base}/${n}/`);
 
-// 生成页码序列，中间用省略号折叠
 function getPageNumbers(current: number, last: number): (number | '…')[] {
   if (last <= 7) {
     return Array.from({ length: last }, (_, i) => i + 1);
@@ -36,18 +35,17 @@ function getPageNumbers(current: number, last: number): (number | '…')[] {
 }
 
 const items = getPageNumbers(currentPage, lastPage);
-const linkClass =
-  'inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-ink/10 px-2 text-sm transition-colors';
-const activeClass = 'bg-accent text-white border-accent';
-const inactiveClass = 'text-ink/70 hover:text-ink hover:border-ink/20';
+const baseClass = 'inline-flex h-9 min-w-9 items-center justify-center px-2 text-sm tracking-wide transition-colors';
+const activeClass = 'text-accent font-medium';
+const inactiveClass = 'text-ink/45 hover:text-ink';
 ---
 
 {
   lastPage > 1 && (
-    <nav class="mt-12 flex items-center justify-center gap-2" aria-label="分页导航">
+    <nav class="mt-20 flex items-center justify-center gap-1" aria-label="分页导航">
       <a
         href={url.prev}
-        class:list={[linkClass, url.prev ? inactiveClass : 'pointer-events-none opacity-40']}
+        class:list={[baseClass, url.prev ? inactiveClass : 'pointer-events-none opacity-25']}
         aria-disabled={!url.prev}
         rel="prev"
       >
@@ -56,11 +54,11 @@ const inactiveClass = 'text-ink/70 hover:text-ink hover:border-ink/20';
 
       {items.map((item) =>
         item === '…' ? (
-          <span class="px-1 text-ink/40">…</span>
+          <span class="px-2 text-ink/25">…</span>
         ) : (
           <a
             href={pageHref(item)}
-            class:list={[linkClass, item === currentPage ? activeClass : inactiveClass]}
+            class:list={[baseClass, item === currentPage ? activeClass : inactiveClass]}
             aria-current={item === currentPage ? 'page' : undefined}
           >
             {item}
@@ -70,7 +68,7 @@ const inactiveClass = 'text-ink/70 hover:text-ink hover:border-ink/20';
 
       <a
         href={url.next}
-        class:list={[linkClass, url.next ? inactiveClass : 'pointer-events-none opacity-40']}
+        class:list={[baseClass, url.next ? inactiveClass : 'pointer-events-none opacity-25']}
         aria-disabled={!url.next}
         rel="next"
       >

@@ -20,6 +20,12 @@ const { title, description = SITE.description } = Astro.props;
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -37,7 +43,8 @@ const { title, description = SITE.description } = Astro.props;
   </head>
   <body class="min-h-screen flex flex-col">
     <Header />
-    <main class="flex-1 w-full max-w-4xl mx-auto px-6 py-12">
+    <!-- 留白即节奏：以纵向间距划分模块，不使用分割线 -->
+    <main class="flex-1 w-full max-w-3xl mx-auto px-6 sm:px-8 pt-16 pb-24">
       <slot />
     </main>
     <Footer />

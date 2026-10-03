@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * 首页 Hero 区的 Three.js 背景场景：
- * 星空粒子 + 一个缓慢旋转的线框多面体。
+ * 首页 Hero 背景：低对比星尘 + 陶土色线框多面体
+ * 克制的运动与视差，服务于阅读而非抢夺注意力。
  */
 export default function HeroScene() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,12 +14,12 @@ export default function HeroScene() {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      60,
+      55,
       container.clientWidth / container.clientHeight,
       0.1,
       100
     );
-    camera.position.z = 6;
+    camera.position.z = 7;
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -29,37 +29,36 @@ export default function HeroScene() {
     renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
 
-    // 主体：线框多面体
-    const geometry = new THREE.IcosahedronGeometry(1.8, 1);
+    // 主体：线框多面体（陶土色，低透明）
+    const geometry = new THREE.IcosahedronGeometry(2, 1);
     const material = new THREE.MeshBasicMaterial({
-      color: 0x6366f1,
+      color: 0xc97b52,
       wireframe: true,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.28,
     });
     const polyhedron = new THREE.Mesh(geometry, material);
     scene.add(polyhedron);
 
-    // 星空粒子
-    const starCount = 600;
+    // 星尘
+    const starCount = 420;
     const positions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount * 3; i += 3) {
-      positions[i] = (Math.random() - 0.5) * 24;
-      positions[i + 1] = (Math.random() - 0.5) * 14;
-      positions[i + 2] = (Math.random() - 0.5) * 12;
+      positions[i] = (Math.random() - 0.5) * 22;
+      positions[i + 1] = (Math.random() - 0.5) * 12;
+      positions[i + 2] = (Math.random() - 0.5) * 10;
     }
     const starGeometry = new THREE.BufferGeometry();
     starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const starMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.035,
+      color: 0xe8dcc8,
+      size: 0.028,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.4,
     });
     const stars = new THREE.Points(starGeometry, starMaterial);
     scene.add(stars);
 
-    // 交互：鼠标视差
     const mouse = new THREE.Vector2(0, 0);
     const onPointerMove = (event: PointerEvent) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -67,7 +66,6 @@ export default function HeroScene() {
     };
     window.addEventListener('pointermove', onPointerMove);
 
-    // 自适应
     const onResize = () => {
       if (!container) return;
       camera.aspect = container.clientWidth / container.clientHeight;
@@ -83,13 +81,12 @@ export default function HeroScene() {
       frameId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      polyhedron.rotation.x = elapsed * 0.18;
-      polyhedron.rotation.y = elapsed * 0.28;
+      polyhedron.rotation.x = elapsed * 0.12;
+      polyhedron.rotation.y = elapsed * 0.18;
+      stars.rotation.y = elapsed * 0.02;
 
-      stars.rotation.y = elapsed * 0.03;
-
-      camera.position.x += (mouse.x * 0.6 - camera.position.x) * 0.03;
-      camera.position.y += (mouse.y * 0.4 - camera.position.y) * 0.03;
+      camera.position.x += (mouse.x * 0.45 - camera.position.x) * 0.025;
+      camera.position.y += (mouse.y * 0.3 - camera.position.y) * 0.025;
       camera.lookAt(scene.position);
 
       renderer.render(scene, camera);
@@ -109,11 +106,5 @@ export default function HeroScene() {
     };
   }, []);
 
-  return (
-    <div
-      ref={containerRef}
-      aria-hidden="true"
-      className="absolute inset-0"
-    />
-  );
+  return <div ref={containerRef} aria-hidden="true" className="absolute inset-0" />;
 }

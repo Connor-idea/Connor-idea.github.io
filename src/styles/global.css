@@ -7,22 +7,28 @@
   --color-ink: var(--ink);
   --color-paper: var(--paper);
   --color-accent: var(--accent);
-  --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    system-ui, sans-serif;
+  --color-muted: var(--muted);
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN",
+    "Songti SC", "STSong", "SimSun", serif;
+  --font-sans: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+    "SimSun", serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
 }
 
+/* ── 色彩：象牙纸 + 墨色 + 陶土色点缀 ── */
 :root {
-  --ink: #0f172a;
-  --paper: #f8fafc;
-  --accent: #6366f1;
+  --paper: #f7f3ec;
+  --ink: #2a2420;
+  --accent: #a85c3c;
+  --muted: #8a7f72;
   color-scheme: light;
 }
 
 .dark {
-  --ink: #e2e8f0;
-  --paper: #0b1220;
-  --accent: #818cf8;
+  --paper: #1c1815;
+  --ink: #e8e0d4;
+  --accent: #c97b52;
+  --muted: #9a8e80;
   color-scheme: dark;
 }
 
@@ -31,9 +37,94 @@ html {
 }
 
 body {
-  @apply bg-paper text-ink font-sans antialiased;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "kern" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 中文正文阅读节奏 */
+body {
+  letter-spacing: 0.02em;
+  line-height: 1.85;
 }
 
 ::selection {
-  @apply bg-accent/20;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* ── 文章排版：思源宋体阅读节奏 ── */
+.prose {
+  --tw-prose-body: var(--ink);
+  --tw-prose-headings: var(--ink);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--ink);
+  --tw-prose-counters: var(--muted);
+  --tw-prose-bullets: var(--muted);
+  --tw-prose-quotes: var(--ink);
+  --tw-prose-quote-borders: color-mix(in srgb, var(--accent) 40%, transparent);
+  line-height: 1.95;
+  letter-spacing: 0.02em;
+}
+
+.prose :where(p):not(:where([class~="not-prose"] *)) {
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+}
+
+.prose :where(h2):not(:where([class~="not-prose"] *)) {
+  margin-top: 2.8em;
+  margin-bottom: 1em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.prose :where(h3):not(:where([class~="not-prose"] *)) {
+  margin-top: 2.2em;
+  margin-bottom: 0.8em;
+  font-weight: 600;
+}
+
+.prose :where(ul, ol):not(:where([class~="not-prose"] *)) {
+  margin-top: 1.4em;
+  margin-bottom: 1.4em;
+  padding-left: 1.4em;
+}
+
+.prose :where(li):not(:where([class~="not-prose"] *)) {
+  margin-top: 0.55em;
+  margin-bottom: 0.55em;
+}
+
+.prose :where(blockquote):not(:where([class~="not-prose"] *)) {
+  border-left-width: 2px;
+  border-left-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  padding-left: 1.4em;
+  font-style: normal;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+
+.prose :where(code):not(:where([class~="not-prose"] *)) {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  letter-spacing: 0;
+}
+
+.prose :where(pre):not(:where([class~="not-prose"] *)) {
+  letter-spacing: 0;
+  line-height: 1.7;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+/* ── 焦点态：克制但清晰 ── */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }

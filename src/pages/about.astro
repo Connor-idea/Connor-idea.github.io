@@ -18,73 +18,69 @@ const profile = {
 ---
 
 <BaseLayout title="关于 | My Blog" description={`关于 ${profile.name}`}>
-  <header class="mb-10">
-    <h1 class="text-3xl font-bold tracking-tight">关于</h1>
-    <p class="mt-2 text-ink/60">一些关于我的信息</p>
+  <header class="mb-14">
+    <h1 class="text-3xl font-semibold tracking-wide">关于</h1>
+    <p class="mt-3 text-ink/45 tracking-wide">一些关于我的信息</p>
   </header>
 
-  <section class="flex flex-col items-start gap-8 md:flex-row">
-    <!-- 头像占位 -->
-    <div
-      class="flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl border border-ink/10 bg-accent/10 text-3xl font-bold text-accent"
-    >
-      {profile.name.slice(0, 1)}
+  <!-- 纵向留白分组，替代边框卡片 -->
+  <section class="space-y-14">
+    <div class="flex flex-col items-start gap-8 sm:flex-row sm:items-center">
+      <div
+        class="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-accent/10 text-2xl font-medium text-accent"
+      >
+        {profile.name.slice(0, 1)}
+      </div>
+      <div>
+        <h2 class="text-2xl font-semibold tracking-wide">{profile.name}</h2>
+        <p class="mt-1.5 text-ink/55 tracking-wide">{profile.title}</p>
+        <p class="mt-1 text-sm text-ink/35 tracking-wide">{profile.location}</p>
+      </div>
     </div>
 
-    <div class="flex-1 space-y-8">
-      <div>
-        <h2 class="text-2xl font-semibold tracking-tight">{profile.name}</h2>
-        <p class="mt-1 text-ink/70">{profile.title}</p>
-        <p class="mt-1 text-sm text-ink/50">{profile.location}</p>
-      </div>
+    <div>
+      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">简介</h3>
+      <p class="mt-4 text-ink/70 leading-loose max-w-2xl">{profile.bio}</p>
+    </div>
 
-      <div>
-        <h3 class="text-sm font-medium uppercase tracking-wider text-ink/50">简介</h3>
-        <p class="mt-2 leading-relaxed text-ink/80">{profile.bio}</p>
-      </div>
+    <div>
+      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">技能</h3>
+      <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+        {
+          profile.skills.map((skill) => (
+            <li class="text-ink/65 tracking-wide">{skill}</li>
+          ))
+        }
+      </ul>
+    </div>
 
-      <div>
-        <h3 class="text-sm font-medium uppercase tracking-wider text-ink/50">技能</h3>
-        <ul class="mt-3 flex flex-wrap gap-2">
-          {
-            profile.skills.map((skill) => (
-              <li class="rounded-full border border-ink/10 px-3 py-1 text-sm text-ink/70">
-                {skill}
-              </li>
-            ))
-          }
-        </ul>
-      </div>
+    <div>
+      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">链接</h3>
+      <ul class="mt-4 flex flex-wrap gap-x-8 gap-y-2">
+        {
+          profile.links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-accent/80 hover:text-accent transition-colors tracking-wide"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
 
-      <div>
-        <h3 class="text-sm font-medium uppercase tracking-wider text-ink/50">链接</h3>
-        <ul class="mt-3 flex flex-wrap gap-4">
-          {
-            profile.links.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-accent hover:underline"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div>
-        <h3 class="text-sm font-medium uppercase tracking-wider text-ink/50">联系</h3>
-        <p class="mt-2 text-ink/80">
-          邮箱：
-          <a href={`mailto:${profile.email}`} class="text-accent hover:underline">
-            {profile.email}
-          </a>
-        </p>
-      </div>
+    <div>
+      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">联系</h3>
+      <p class="mt-4 text-ink/70">
+        <a href={`mailto:${profile.email}`} class="text-accent/80 hover:text-accent transition-colors tracking-wide">
+          {profile.email}
+        </a>
+      </p>
     </div>
   </section>
 </BaseLayout>

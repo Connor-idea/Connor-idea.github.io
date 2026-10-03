@@ -10,15 +10,15 @@ export const SITE = {
 export const PAGE_SIZE = 5;
 
 /**
- * giscus 评论配置
- * https://giscus.app/zh-CN — 填入你的仓库信息后即可启用
- * 仓库需开启 Discussions，且为公开仓库
+ * giscus 评论配置 — 基于 GitHub Discussions
+ * https://giscus.app/zh-CN
+ * 仓库已开启 Discussions，使用 General 分类
  */
 export const GISCUS = {
-  repo: 'your-username/your-username.github.io',
-  repoId: 'R_xxxxxxxx',
-  category: 'Announcements',
-  categoryId: 'DIC_xxxxxxxx',
+  repo: 'Connor-idea/Connor-idea.github.io',
+  repoId: 'R_kgDOGSTLYw',
+  category: 'General',
+  categoryId: 'DIC_kwDOGSTLY84DG-Fi',
   mapping: 'pathname',
   reactionsEnabled: '1',
   emitMetadata: '0',

@@ -34,11 +34,9 @@ const { title, description = SITE.description } = Astro.props;
     />
     <title>{title}</title>
     <script is:inline>
-      // 避免主题闪烁：在渲染前应用用户偏好
+      // 默认始终浅色（象牙白）；仅当用户手动切换过才尊重记忆
       const stored = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = stored ?? (prefersDark ? 'dark' : 'light');
-      if (theme === 'dark') document.documentElement.classList.add('dark');
+      if (stored === 'dark') document.documentElement.classList.add('dark');
     </script>
   </head>
   <body class="min-h-screen flex flex-col">

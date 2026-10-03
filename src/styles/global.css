@@ -15,20 +15,33 @@
   --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
 }
 
-/* ── 色彩：象牙纸 + 墨色 + 陶土色点缀 ── */
+/* ─────────────────────────────────────────────
+   色彩与质感
+   白天：宣纸 — 象牙白纸面，细纤维颗粒
+   夜晚：拓碑 — 玄石底，白字微凸，石面斑驳
+   ───────────────────────────────────────────── */
 :root {
   --paper: #f7f3ec;
   --ink: #2a2420;
   --accent: #a85c3c;
   --muted: #8a7f72;
+  --grain-opacity: 0.055;
+  --grain-blend: multiply;
+  --fiber-opacity: 0.035;
+  --text-shadow: none;
   color-scheme: light;
 }
 
 .dark {
-  --paper: #1c1815;
-  --ink: #e8e0d4;
-  --accent: #c97b52;
+  --paper: #161311;
+  --ink: #ddd4c6;
+  --accent: #c4724e;
   --muted: #9a8e80;
+  --grain-opacity: 0.14;
+  --grain-blend: overlay;
+  --fiber-opacity: 0.06;
+  /* 拓碑：白字从石面微微浮起 */
+  --text-shadow: 0 0 12px rgba(221, 212, 198, 0.12);
   color-scheme: dark;
 }
 
@@ -37,19 +50,61 @@ html {
 }
 
 body {
-  background: var(--paper);
+  background-color: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
   font-feature-settings: "kern" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-}
-
-/* 中文正文阅读节奏 */
-body {
   letter-spacing: 0.02em;
   line-height: 1.85;
+  text-shadow: var(--text-shadow);
+  position: relative;
+}
+
+/* 纸/石颗粒：fractalNoise 铺满全页，不拦截交互 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 280px 280px;
+}
+
+/* 宣纸纤维 / 石面斑驳：极淡的交错纹理 */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--fiber-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      rgba(120, 100, 80, 0.25) 3px 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 5px,
+      rgba(90, 75, 60, 0.18) 5px 6px
+    ),
+    radial-gradient(ellipse 120% 80% at 20% 10%, rgba(140, 110, 80, 0.2), transparent 55%),
+    radial-gradient(ellipse 90% 70% at 85% 85%, rgba(100, 85, 70, 0.18), transparent 50%);
+  background-size: 280px 280px, 280px 280px, 100% 100%, 100% 100%;
+}
+
+/* 让内容位于纹理层之上 */
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 ::selection {
@@ -118,9 +173,16 @@ body {
   line-height: 1.7;
   margin-top: 2em;
   margin-bottom: 2em;
+  /* 代码块在拓碑模式下呈「刻石」感 */
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
-/* ── 焦点态：克制但清晰 ── */
+/* 拓碑模式：标题如碑额，微加重 */
+.dark .prose :where(h2, h3):not(:where([class~="not-prose"] *)) {
+  text-shadow: 0 0 18px rgba(221, 212, 198, 0.18);
+}
+
+/* ── 焦点态 ── */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible {

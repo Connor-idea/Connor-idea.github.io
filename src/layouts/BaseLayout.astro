@@ -34,9 +34,13 @@ const { title, description = SITE.description } = Astro.props;
     />
     <title>{title}</title>
     <script is:inline>
-      // 默认始终浅色（象牙白）；仅当用户手动切换过才尊重记忆
+      // 默认白天宣纸；点切换后记忆夜晚拓碑
+      // 支持 ?theme=dark / ?theme=light 临时预览
+      const params = new URLSearchParams(location.search);
+      const forced = params.get('theme');
       const stored = localStorage.getItem('theme');
-      if (stored === 'dark') document.documentElement.classList.add('dark');
+      const isDark = forced === 'dark' || (forced !== 'light' && stored === 'dark');
+      if (isDark) document.documentElement.classList.add('dark');
     </script>
   </head>
   <body class="min-h-screen flex flex-col">

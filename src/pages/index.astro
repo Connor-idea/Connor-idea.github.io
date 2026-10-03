@@ -10,9 +10,11 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 ---
 
 <BaseLayout title="首页 | My Blog">
-  <!-- Hero：开阔留白，3D 场景作低调背景 -->
+  <!-- Hero：开阔留白；白天如墨色纸镇，夜晚如碑面 -->
   <section class="relative -mt-8 mb-24">
-    <div class="relative overflow-hidden rounded-3xl bg-ink text-paper">
+    <div
+      class="relative overflow-hidden rounded-3xl bg-ink text-paper dark:bg-[#0e0c0a] dark:text-[#ddd4c6] dark:shadow-[inset_0_1px_0_rgba(221,212,198,0.06),0_24px_60px_-24px_rgba(0,0,0,0.55)]"
+    >
       <HeroScene client:load />
       <div class="relative flex flex-col items-center justify-center text-center px-8 py-28 md:py-36">
         <p class="text-sm tracking-[0.3em] text-paper/50 uppercase">Personal Blog</p>

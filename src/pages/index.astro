@@ -10,23 +10,23 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 ---
 
 <BaseLayout title="首页 | My Blog">
-  <!-- Hero：开阔留白；白天如墨色纸镇，夜晚如碑面 -->
-  <section class="relative -mt-8 mb-24">
+  <!-- Hero：压缩高度；Three.js 仅进入视口后再水合 -->
+  <section class="relative -mt-8 mb-20">
     <div
       class="relative overflow-hidden rounded-3xl bg-ink text-paper dark:bg-[#0e0c0a] dark:text-[#ddd4c6] dark:shadow-[inset_0_1px_0_rgba(221,212,198,0.06),0_24px_60px_-24px_rgba(0,0,0,0.55)]"
     >
-      <HeroScene client:load />
-      <div class="relative flex flex-col items-center justify-center text-center px-8 py-28 md:py-36">
+      <HeroScene client:visible />
+      <div class="relative flex flex-col items-center justify-center text-center px-8 py-20 md:py-28">
         <p class="text-sm tracking-[0.3em] text-paper/50 uppercase">Personal Blog</p>
         <h1 class="mt-6 text-4xl md:text-5xl font-semibold tracking-wide leading-tight">
           你好，我是 Connor
         </h1>
-        <p class="mt-6 text-lg text-paper/65 max-w-xl leading-loose">
+        <p class="mt-5 text-lg text-paper/65 max-w-xl leading-loose">
           记录技术、思考与生活。
         </p>
         <a
           href="/blog"
-          class="mt-10 inline-flex items-center gap-2 text-sm tracking-[0.2em] text-paper/80 hover:text-accent transition-colors"
+          class="mt-8 inline-flex items-center gap-2 rounded-full bg-paper/10 px-7 py-3 text-sm tracking-[0.2em] text-paper hover:bg-paper/15 hover:text-accent transition-colors"
         >
           阅读博客
           <span aria-hidden="true">→</span>

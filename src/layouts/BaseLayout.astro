@@ -7,9 +7,23 @@ import { SITE } from '../consts';
 interface Props {
   title: string;
   description?: string;
+  /** 文章页传入，用于 OG/JSON-LD */
+  pubDate?: Date;
+  updatedDate?: Date;
+  /** 覆盖默认 OG 图片路径 */
+  image?: string;
 }
 
-const { title, description = SITE.description } = Astro.props;
+const {
+  title,
+  description = SITE.description,
+  pubDate,
+  updatedDate,
+  image = '/og-image.png',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
 ---
 
 <!doctype html>
@@ -19,6 +33,8 @@ const { title, description = SITE.description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <meta name="author" content={SITE.author} />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,6 +48,26 @@ const { title, description = SITE.description } = Astro.props;
       title={SITE.title}
       href={new URL('rss.xml', Astro.site)}
     />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:type" content={pubDate ? 'article' : 'website'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="zh_CN" />
+    {pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />}
+    {updatedDate && <meta property="article:modified_time" content={updatedDate.toISOString()} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <title>{title}</title>
     <script is:inline>
       // 默认白天宣纸；点切换后记忆夜晚拓碑
@@ -44,9 +80,15 @@ const { title, description = SITE.description } = Astro.props;
     </script>
   </head>
   <body class="min-h-screen flex flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white"
+    >
+      跳到主内容
+    </a>
     <Header />
     <!-- 留白即节奏：以纵向间距划分模块，不使用分割线 -->
-    <main class="flex-1 w-full max-w-3xl mx-auto px-6 sm:px-8 pt-16 pb-24">
+    <main id="main" class="flex-1 w-full max-w-3xl mx-auto px-6 sm:px-8 pt-16 pb-24">
       <slot />
     </main>
     <Footer />

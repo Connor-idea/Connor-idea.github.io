@@ -14,9 +14,36 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const { title, description, pubDate, updatedDate, tags } = post.data;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  dateModified: (updatedDate ?? pubDate).toISOString(),
+  author: { '@type': 'Person', name: 'Connor' },
+  keywords: tags.join(','),
+  url: new URL(`/blog/${post.id}/`, 'https://connor.zone').href,
+  publisher: {
+    '@type': 'Person',
+    name: 'Connor',
+    url: 'https://connor.zone',
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': new URL(`/blog/${post.id}/`, 'https://connor.zone').href,
+  },
+};
 ---
 
-<BaseLayout title={`${title} | My Blog`} description={description}>
+<BaseLayout
+  title={`${title} | My Blog`}
+  description={description}
+  pubDate={pubDate}
+  updatedDate={updatedDate}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <!-- data-pagefind-body: 全站只索引文章页正文，搜索不混入标签/列表页 -->
   <article data-pagefind-body>
     <header class="mb-14">

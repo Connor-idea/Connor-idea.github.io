@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="页面未找到 | My Blog" description="页面不存在">
+  <section class="flex flex-col items-center justify-center py-28 text-center">
+    <p class="text-sm tracking-[0.3em] text-ink/45 uppercase">404</p>
+    <h1 class="mt-6 text-3xl md:text-4xl font-semibold tracking-wide">
+      页面未找到
+    </h1>
+    <p class="mt-5 text-ink/60 leading-loose max-w-md">
+      你要找的页面可能已被移动或从未存在。<br />
+      不如回到首页，或搜索你想看的内容。
+    </p>
+    <div class="mt-10 flex items-center gap-8">
+      <a
+        href="/"
+        class="text-sm tracking-[0.2em] text-accent hover:opacity-80 transition-opacity"
+      >
+        回到首页
+      </a>
+      <a
+        href="/blog"
+        class="text-sm tracking-[0.2em] text-ink/60 hover:text-ink transition-colors"
+      >
+        浏览博客
+      </a>
+    </div>
+  </section>
+</BaseLayout>

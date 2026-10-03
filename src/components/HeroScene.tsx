@@ -3,7 +3,8 @@ import * as THREE from 'three';
 
 /**
  * 首页 Hero 背景：低对比星尘 + 陶土色线框多面体
- * 克制的运动与视差，服务于阅读而非抢夺注意力。
+ * - prefers-reduced-motion 时静止渲染单帧
+ * - 页面不可见时暂停动画循环
  */
 export default function HeroScene() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -11,6 +12,8 @@ export default function HeroScene() {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -29,7 +32,6 @@ export default function HeroScene() {
     renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
 
-    // 主体：线框多面体（陶土色，低透明）
     const geometry = new THREE.IcosahedronGeometry(2, 1);
     const material = new THREE.MeshBasicMaterial({
       color: 0xc97b52,
@@ -40,8 +42,7 @@ export default function HeroScene() {
     const polyhedron = new THREE.Mesh(geometry, material);
     scene.add(polyhedron);
 
-    // 星尘
-    const starCount = 420;
+    const starCount = 360;
     const positions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount * 3; i += 3) {
       positions[i] = (Math.random() - 0.5) * 22;
@@ -61,6 +62,7 @@ export default function HeroScene() {
 
     const mouse = new THREE.Vector2(0, 0);
     const onPointerMove = (event: PointerEvent) => {
+      if (reduceMotion) return;
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     };
@@ -75,9 +77,11 @@ export default function HeroScene() {
     window.addEventListener('resize', onResize);
 
     let frameId = 0;
+    let running = true;
     const clock = new THREE.Clock();
 
     const animate = () => {
+      if (!running) return;
       frameId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
@@ -91,12 +95,36 @@ export default function HeroScene() {
 
       renderer.render(scene, camera);
     };
-    animate();
+
+    if (reduceMotion) {
+      // 静态单帧：有视觉、无动画
+      polyhedron.rotation.set(0.35, 0.55, 0);
+      camera.lookAt(scene.position);
+      renderer.render(scene, camera);
+    } else {
+      animate();
+    }
+
+    // 页面不可见时暂停，省电省 CPU
+    const onVisibility = () => {
+      if (reduceMotion) return;
+      if (document.hidden) {
+        running = false;
+        cancelAnimationFrame(frameId);
+      } else {
+        running = true;
+        clock.getDelta(); // 丢弃隐藏期间的时间跳变
+        animate();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
+      running = false;
       cancelAnimationFrame(frameId);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('resize', onResize);
+      document.removeEventListener('visibilitychange', onVisibility);
       geometry.dispose();
       material.dispose();
       starGeometry.dispose();

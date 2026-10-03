@@ -5,14 +5,13 @@ import { SITE } from '../consts';
 const profile = {
   name: SITE.author,
   title: '软件工程师 / 终身学习者',
-  location: '中国 · 某城市',
-  email: 'your-email@example.com',
-  bio: '这里是一段简短的自我介绍占位文字。你可以介绍自己的职业方向、兴趣爱好，以及写博客的初衷。',
-  skills: ['TypeScript', 'React', 'Astro', 'Node.js', 'Three.js'],
+  location: '中国',
+  email: 'hello@connor.zone',
+  bio: '一名热爱构建的软件工程师，关注 Web 技术、产品设计与工程效率。这个博客是我的公开笔记本：记录技术实践、阅读思考与生活碎片，也希望通过写作把模糊的直觉整理成清晰的判断。相信好的工具应该服务于内容，好的表达应该经得起时间。',
+  skills: ['TypeScript', 'React', 'Astro', 'Node.js', 'Three.js', '设计系统'],
   links: [
-    { label: 'GitHub', href: 'https://github.com/your-username' },
-    { label: 'X / Twitter', href: 'https://x.com/your-username' },
-    { label: '掘金', href: 'https://juejin.cn/user/your-username' },
+    { label: 'GitHub', href: 'https://github.com/Connor-idea' },
+    { label: 'RSS', href: '/rss.xml' },
   ],
 };
 ---
@@ -20,7 +19,7 @@ const profile = {
 <BaseLayout title="关于 | My Blog" description={`关于 ${profile.name}`}>
   <header class="mb-14">
     <h1 class="text-3xl font-semibold tracking-wide">关于</h1>
-    <p class="mt-3 text-ink/45 tracking-wide">一些关于我的信息</p>
+    <p class="mt-3 text-ink/55 tracking-wide">一些关于我的信息</p>
   </header>
 
   <!-- 纵向留白分组，替代边框卡片 -->
@@ -33,38 +32,36 @@ const profile = {
       </div>
       <div>
         <h2 class="text-2xl font-semibold tracking-wide">{profile.name}</h2>
-        <p class="mt-1.5 text-ink/55 tracking-wide">{profile.title}</p>
-        <p class="mt-1 text-sm text-ink/35 tracking-wide">{profile.location}</p>
+        <p class="mt-1.5 text-ink/60 tracking-wide">{profile.title}</p>
+        <p class="mt-1 text-sm text-ink/45 tracking-wide">{profile.location}</p>
       </div>
     </div>
 
     <div>
-      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">简介</h3>
-      <p class="mt-4 text-ink/70 leading-loose max-w-2xl">{profile.bio}</p>
+      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/50">简介</h3>
+      <p class="mt-4 text-ink/75 leading-loose max-w-2xl">{profile.bio}</p>
     </div>
 
     <div>
-      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">技能</h3>
+      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/50">技能</h3>
       <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
         {
           profile.skills.map((skill) => (
-            <li class="text-ink/65 tracking-wide">{skill}</li>
+            <li class="text-ink/70 tracking-wide">{skill}</li>
           ))
         }
       </ul>
     </div>
 
     <div>
-      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">链接</h3>
+      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/50">链接</h3>
       <ul class="mt-4 flex flex-wrap gap-x-8 gap-y-2">
         {
           profile.links.map((link) => (
             <li>
               <a
                 href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-accent/80 hover:text-accent transition-colors tracking-wide"
+                class="text-accent/85 hover:text-accent transition-colors tracking-wide"
               >
                 {link.label}
               </a>
@@ -75,9 +72,9 @@ const profile = {
     </div>
 
     <div>
-      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/40">联系</h3>
-      <p class="mt-4 text-ink/70">
-        <a href={`mailto:${profile.email}`} class="text-accent/80 hover:text-accent transition-colors tracking-wide">
+      <h3 class="text-xs font-medium uppercase tracking-[0.25em] text-ink/50">联系</h3>
+      <p class="mt-4 text-ink/75">
+        <a href={`mailto:${profile.email}`} class="text-accent/85 hover:text-accent transition-colors tracking-wide">
           {profile.email}
         </a>
       </p>

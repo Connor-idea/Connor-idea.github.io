@@ -1,0 +1,81 @@
+---
+import type { Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>;
+  /** 列表路径，例如 /blog 或 /tags/astro */
+  basePath: string;
+}
+
+const { page, basePath } = Astro.props;
+const { currentPage, lastPage, url } = page;
+
+const normalize = (path: string) => (path.endsWith('/') ? path.slice(0, -1) : path);
+const base = normalize(basePath);
+
+// Astro [...page] 约定：第 1 页在 /blog/，后续页在 /blog/2/ 等
+const pageHref = (n: number) => (n === 1 ? `${base}/` : `${base}/${n}/`);
+
+// 生成页码序列，中间用省略号折叠
+function getPageNumbers(current: number, last: number): (number | '…')[] {
+  if (last <= 7) {
+    return Array.from({ length: last }, (_, i) => i + 1);
+  }
+  const pages = new Set<number>([1, last, current, current - 1, current + 1]);
+  if (current <= 3) [2, 3, 4].forEach((n) => pages.add(n));
+  if (current >= last - 2) [last - 3, last - 2, last - 1].forEach((n) => pages.add(n));
+
+  const sorted = [...pages].filter((n) => n >= 1 && n <= last).sort((a, b) => a - b);
+  const result: (number | '…')[] = [];
+  for (let i = 0; i < sorted.length; i++) {
+    if (i > 0 && sorted[i] - sorted[i - 1] > 1) result.push('…');
+    result.push(sorted[i]);
+  }
+  return result;
+}
+
+const items = getPageNumbers(currentPage, lastPage);
+const linkClass =
+  'inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-ink/10 px-2 text-sm transition-colors';
+const activeClass = 'bg-accent text-white border-accent';
+const inactiveClass = 'text-ink/70 hover:text-ink hover:border-ink/20';
+---
+
+{
+  lastPage > 1 && (
+    <nav class="mt-12 flex items-center justify-center gap-2" aria-label="分页导航">
+      <a
+        href={url.prev}
+        class:list={[linkClass, url.prev ? inactiveClass : 'pointer-events-none opacity-40']}
+        aria-disabled={!url.prev}
+        rel="prev"
+      >
+        ←
+      </a>
+
+      {items.map((item) =>
+        item === '…' ? (
+          <span class="px-1 text-ink/40">…</span>
+        ) : (
+          <a
+            href={pageHref(item)}
+            class:list={[linkClass, item === currentPage ? activeClass : inactiveClass]}
+            aria-current={item === currentPage ? 'page' : undefined}
+          >
+            {item}
+          </a>
+        )
+      )}
+
+      <a
+        href={url.next}
+        class:list={[linkClass, url.next ? inactiveClass : 'pointer-events-none opacity-40']}
+        aria-disabled={!url.next}
+        rel="next"
+      >
+        →
+      </a>
+    </nav>
+  )
+}

@@ -1,0 +1,91 @@
+---
+import { GISCUS } from '../consts';
+
+const isPlaceholder = GISCUS.repo.includes('your-username');
+---
+
+<section class="mt-12 pt-6 border-t border-ink/10" aria-label="评论">
+  <h2 class="text-lg font-semibold tracking-tight mb-4">评论</h2>
+
+  {
+    isPlaceholder ? (
+      <div class="rounded-xl border border-ink/10 bg-ink/5 p-6 text-sm text-ink/60">
+        <p class="font-medium text-ink/80">评论功能尚未配置</p>
+        <p class="mt-2 leading-relaxed">
+          请在{' '}
+          <code class="rounded bg-ink/10 px-1.5 py-0.5 font-mono text-xs">src/consts.ts</code>{' '}
+          中填入你的 giscus 仓库信息（
+          <a
+            href="https://giscus.app/zh-CN"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-accent hover:underline"
+          >
+            giscus.app
+          </a>
+          ），即可启用基于 GitHub Discussions 的评论。
+        </p>
+      </div>
+    ) : (
+      <div
+        class="giscus"
+        data-repo={GISCUS.repo}
+        data-repo-id={GISCUS.repoId}
+        data-category={GISCUS.category}
+        data-category-id={GISCUS.categoryId}
+        data-mapping={GISCUS.mapping}
+        data-reactions-enabled={GISCUS.reactionsEnabled}
+        data-emit-metadata={GISCUS.emitMetadata}
+        data-input-position={GISCUS.inputPosition}
+        data-lang={GISCUS.lang}
+        data-loading={GISCUS.loading}
+        data-theme="preferred_color_scheme"
+      />
+    )
+  }
+</section>
+
+{
+  !isPlaceholder && (
+    <script is:inline>
+      (function () {
+        // 加载 giscus 客户端
+        var s = document.createElement('script');
+        s.src = 'https://giscus.app/client.js';
+        s.async = true;
+        s.crossOrigin = 'anonymous';
+        s.setAttribute('data-repo', document.querySelector('.giscus')?.dataset.repo ?? '');
+        s.setAttribute('data-repo-id', document.querySelector('.giscus')?.dataset.repoId ?? '');
+        s.setAttribute('data-category', document.querySelector('.giscus')?.dataset.category ?? '');
+        s.setAttribute('data-category-id', document.querySelector('.giscus')?.dataset.categoryId ?? '');
+        s.setAttribute('data-mapping', 'pathname');
+        s.setAttribute('data-reactions-enabled', '1');
+        s.setAttribute('data-emit-metadata', '0');
+        s.setAttribute('data-input-position', 'top');
+        s.setAttribute('data-lang', 'zh-CN');
+        s.setAttribute('data-loading', 'lazy');
+        s.setAttribute('data-theme', 'preferred_color_scheme');
+        document.body.appendChild(s);
+
+        // 响应站点明暗主题切换
+        function applyGiscusTheme() {
+          var theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+          var iframe = document.querySelector('iframe.giscus-frame');
+          if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage(
+              { giscus: { setConfig: { theme: theme } } },
+              'https://giscus.app'
+            );
+          }
+        }
+
+        var toggle = document.getElementById('theme-toggle');
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            setTimeout(applyGiscusTheme, 50);
+          });
+        }
+      })();
+    </script>
+  )
+}

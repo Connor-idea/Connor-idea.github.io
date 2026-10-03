@@ -1,0 +1,22 @@
+---
+import { SITE } from '../consts';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-ink/10">
+  <div class="max-w-4xl mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-sm text-ink/60">
+    <p>© {year} {SITE.author}</p>
+    <div class="flex items-center gap-4">
+      <a href="/rss.xml" class="hover:text-accent transition-colors">RSS</a>
+      <a
+        href="https://astro.build"
+        class="hover:text-accent transition-colors"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Built with Astro
+      </a>
+    </div>
+  </div>
+</footer>

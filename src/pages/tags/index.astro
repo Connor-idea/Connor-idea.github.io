@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../consts';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+const tagMap = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagMap.set(tag, (tagMap.get(tag) ?? 0) + 1);
+  }
+}
+
+const tags = [...tagMap.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], SITE.locale));
+---
+
+<BaseLayout title="标签 | My Blog" description="按标签浏览文章">
+  <header class="mb-10">
+    <h1 class="text-3xl font-bold tracking-tight">标签</h1>
+    <p class="mt-2 text-ink/60">共 {tags.length} 个标签</p>
+  </header>
+
+  {
+    tags.length > 0 ? (
+      <ul class="flex flex-wrap gap-3">
+        {tags.map(([tag, count]) => (
+          <li>
+            <a
+              href={`/tags/${encodeURIComponent(tag)}`}
+              class="inline-flex items-center gap-2 rounded-full border border-ink/10 px-4 py-2 text-sm hover:border-accent/50 hover:text-accent transition-colors"
+            >
+              <span class="font-medium">{tag}</span>
+              <span class="text-ink/50">{count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="text-ink/60">还没有标签。</p>
+    )
+  }
+</BaseLayout>

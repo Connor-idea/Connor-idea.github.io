@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+
+const profile = {
+  name: SITE.author,
+  title: '软件工程师 / 终身学习者',
+  location: '中国 · 某城市',
+  email: 'your-email@example.com',
+  bio: '这里是一段简短的自我介绍占位文字。你可以介绍自己的职业方向、兴趣爱好，以及写博客的初衷。',
+  skills: ['TypeScript', 'React', 'Astro', 'Node.js', 'Three.js'],
+  links: [
+    { label: 'GitHub', href: 'https://github.com/your-username' },
+    { label: 'X / Twitter', href: 'https://x.com/your-username' },
+    { label: '掘金', href: 'https://juejin.cn/user/your-username' },
+  ],
+};
+---
+
+<BaseLayout title="关于 | My Blog" description={`关于 ${profile.name}`}>
+  <header class="mb-10">
+    <h1 class="text-3xl font-bold tracking-tight">关于</h1>
+    <p class="mt-2 text-ink/60">一些关于我的信息</p>
+  </header>
+
+  <section class="flex flex-col items-start gap-8 md:flex-row">
+    <!-- 头像占位 -->
+    <div
+      class="flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl border border-ink/10 bg-accent/10 text-3xl font-bold text-accent"
+    >
+      {profile.name.slice(0, 1)}
+    </div>
+
+    <div class="flex-1 space-y-8">
+      <div>
+        <h2 class="text-2xl font-semibold tracking-tight">{profile.name}</h2>
+        <p class="mt-1 text-ink/70">{profile.title}</p>
+        <p class="mt-1 text-sm text-ink/50">{profile.location}</p>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium uppercase tracking-wider text-ink/50">简介</h3>
+        <p class="mt-2 leading-relaxed text-ink/80">{profile.bio}</p>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium uppercase tracking-wider text-ink/50">技能</h3>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {
+            profile.skills.map((skill) => (
+              <li class="rounded-full border border-ink/10 px-3 py-1 text-sm text-ink/70">
+                {skill}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium uppercase tracking-wider text-ink/50">链接</h3>
+        <ul class="mt-3 flex flex-wrap gap-4">
+          {
+            profile.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-accent hover:underline"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium uppercase tracking-wider text-ink/50">联系</h3>
+        <p class="mt-2 text-ink/80">
+          邮箱：
+          <a href={`mailto:${profile.email}`} class="text-accent hover:underline">
+            {profile.email}
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

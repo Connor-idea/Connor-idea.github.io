@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import HeroScene from '../components/HeroScene';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
+---
+
+<BaseLayout title="首页 | My Blog">
+  <section class="py-12">
+    <div class="relative rounded-2xl overflow-hidden border border-ink/10 bg-ink text-paper">
+      <HeroScene client:load />
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight">你好，我是 Connor</h1>
+        <p class="mt-4 text-lg text-paper/80 max-w-xl">
+          记录技术、思考与生活。这里是我的个人博客。
+        </p>
+        <a
+          href="/blog"
+          class="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+        >
+          阅读博客
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-semibold tracking-tight">最新文章</h2>
+      <a href="/blog" class="text-sm text-accent hover:underline">查看全部 →</a>
+    </div>
+    <ul class="space-y-4">
+      {posts.map((post) => <PostCard post={post} />)}
+    </ul>
+  </section>
+</BaseLayout>

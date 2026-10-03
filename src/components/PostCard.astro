@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, tags } = post.data;
+---
+
+<li>
+  <a
+    href={`/blog/${post.id}`}
+    class="block rounded-xl border border-ink/10 p-6 hover:border-accent/50 hover:shadow-sm transition-all"
+  >
+    <div class="flex items-center gap-3 text-sm text-ink/60">
+      <time datetime={pubDate.toISOString()}>
+        {pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+      {
+        tags.length > 0 && (
+          <div class="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <a
+                href={`/tags/${encodeURIComponent(tag)}`}
+                class="rounded-full bg-accent/10 text-accent px-2.5 py-0.5 text-xs hover:bg-accent/20 transition-colors"
+              >
+                {tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </div>
+    <h3 class="mt-2 text-xl font-semibold tracking-tight hover:text-accent transition-colors">
+      {title}
+    </h3>
+    <p class="mt-2 text-ink/70 leading-relaxed">{description}</p>
+  </a>
+</li>
